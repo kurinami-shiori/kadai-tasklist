@@ -14,7 +14,8 @@ class TasksController < ApplicationController
     end
     
     def new
-        @task = Task.new #current_user.tasks.build(task_params) これどうゆう意味？
+        @task = current_user.tasks.build #task_params
+        #Task.newでもいい。フロントの@taskにつなぐ
     end
     
     def create
