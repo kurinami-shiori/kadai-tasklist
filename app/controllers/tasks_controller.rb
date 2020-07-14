@@ -1,17 +1,17 @@
 class TasksController < ApplicationController
     
     before_action :require_user_logged_in, except: [:index]
+    before_action :correct_user, only: [:show, :edit, :destroy]
     
     def index
         if logged_in?
-            @task = current_user.tasks.build
+            #@task = current_user.tasks.build
             @tasks = current_user.tasks.order(id: :desc).page(params[:page])
         # このふたつあんまよくわかってへん
         end
     end
     
     def show
-        @task = Task.find(params[:id])
     end
     
     def new
@@ -30,11 +30,9 @@ class TasksController < ApplicationController
     end
     
     def edit
-        @task = Task.find(params[:id])
     end
     
     def update
-        @task = Task.find(params[:id])
         if @task.update(task_params)
             redirect_to @task
         else
@@ -43,7 +41,6 @@ class TasksController < ApplicationController
     end
     
     def destroy
-        @task = Task.find(params[:id])
         @task.destroy
         redirect_to tasks_url
     end
@@ -54,4 +51,10 @@ class TasksController < ApplicationController
         params.require(:task).permit(:content, :status)
     end
     
+    def correct_user
+        @task = current_user.tasks.find_by(id: params[:id])
+        unless @task
+            redirect_to root_url
+        end
+    end
 end
